@@ -664,7 +664,6 @@ public class RAMReel extends LinearLayout {
                 currentText = "";
                 filterText = "";
                 mInputText.setText("");
-                mInputText.setClickable(true);
                 mInputText.requestFocus();
                 showSoftInput();
             }
@@ -674,9 +673,9 @@ public class RAMReel extends LinearLayout {
         mInputText.setHint(hint);
         mInputText.addTextChangedListener(new TextWatcher() {
 
-            int DELETED = 0;
+            int DELETED = -1;
             int ONE_ADDED = 1;
-            int IDLE = -1;
+            int IDLE = 0;
 
             boolean techChanges = false;
             int state = IDLE;
@@ -684,7 +683,7 @@ public class RAMReel extends LinearLayout {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 if (!techChanges) {
-                    state = after;
+                    state = count - after;
                 } else {
                     techChanges = false;
                 }
@@ -712,45 +711,11 @@ public class RAMReel extends LinearLayout {
             public void afterTextChanged(Editable s) {
             }
         });
-        mInputText.setOnFocusChangeListener(new OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    setFocusableInTouchMode(true);
-                    setFocusable(true);
-                } else if (!TextUtils.isEmpty(currentText)) {
-                    mInputText.setClickable(true);
-                }
-            }
-        });
-        mInputText.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    mInputText.performClick();
-                }
-                return false;
-            }
-        });
-        mInputText.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (filterText.toLowerCase().equals(currentText.toLowerCase()) && !TextUtils.isEmpty(filterText)) {
-                    if (onItemClickListener != null) {
-                        onItemClickListener.onItemClick(mInputText.getText().toString());
-                    }
-                } else {
-                    filterText = currentText;
-                    mInputText.setText(currentText);
-                    setDisplayedValues(filter(mValues, filterText));
-                }
-            }
-        });
         mInputText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    mInputText.performClick();
+                    done();
                     return true;
                 }
                 return false;
@@ -787,6 +752,18 @@ public class RAMReel extends LinearLayout {
 
         if (getImportantForAccessibility() == IMPORTANT_FOR_ACCESSIBILITY_AUTO) {
             setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_YES);
+        }
+    }
+
+    private void done() {
+        if (filterText.toLowerCase().equals(currentText.toLowerCase()) && !TextUtils.isEmpty(filterText)) {
+            if (onItemClickListener != null) {
+                onItemClickListener.onItemClick(mInputText.getText().toString());
+            }
+        } else {
+            filterText = currentText;
+            mInputText.setText(currentText);
+            setDisplayedValues(filter(mValues, filterText));
         }
     }
 
@@ -909,11 +886,11 @@ public class RAMReel extends LinearLayout {
                     mFlingScroller.forceFinished(true);
                     mAdjustScroller.forceFinished(true);
                 } else if (mLastDownEventY < mTopSelectionDividerTop) {
-                    hideSoftInput();
+                    //hideSoftInput();
                     postChangeCurrentByOneFromLongPress(
                             false, ViewConfiguration.getLongPressTimeout());
                 } else if (mLastDownEventY > mBottomSelectionDividerBottom) {
-                    hideSoftInput();
+                    //hideSoftInput();
                     postChangeCurrentByOneFromLongPress(
                             true, ViewConfiguration.getLongPressTimeout());
                 } else {
@@ -1005,10 +982,6 @@ public class RAMReel extends LinearLayout {
     public boolean dispatchTouchEvent(MotionEvent event) {
         final int action = event.getAction() & MotionEvent.ACTION_MASK;
         switch (action) {
-            case MotionEvent.ACTION_DOWN:
-                mInputText.clearFocus();
-                hideSoftInput();
-                break;
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
                 removeAllCallbacks();
