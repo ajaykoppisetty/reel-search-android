@@ -763,6 +763,7 @@ public class RAMReel extends LinearLayout {
         } else {
             filterText = currentText;
             mInputText.setText(currentText);
+            mInputText.setSelection(currentText.length());
             setDisplayedValues(filter(mValues, filterText));
         }
     }
