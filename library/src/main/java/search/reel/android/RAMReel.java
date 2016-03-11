@@ -756,9 +756,9 @@ public class RAMReel extends LinearLayout {
     }
 
     private void done() {
-        if (filterText.toLowerCase().equals(currentText.toLowerCase()) && !TextUtils.isEmpty(filterText)) {
+        if (!TextUtils.isEmpty(filterText) && (filterText.toLowerCase().equals(currentText.toLowerCase()) || TextUtils.isEmpty(currentText))) {
             if (onItemClickListener != null) {
-                onItemClickListener.onItemClick(mInputText.getText().toString());
+                onItemClickListener.onItemClick(TextUtils.isEmpty(currentText) ? filterText : currentText);
             }
         } else {
             filterText = currentText;
@@ -2192,7 +2192,8 @@ public class RAMReel extends LinearLayout {
         }
 
         public void sendAccessibilityEventForVirtualView(int virtualViewId, int eventType) {
-            if (mProvider != null) mProvider.sendAccessibilityEventForVirtualView(virtualViewId, eventType);
+            if (mProvider != null)
+                mProvider.sendAccessibilityEventForVirtualView(virtualViewId, eventType);
         }
     }
 
@@ -2557,7 +2558,7 @@ public class RAMReel extends LinearLayout {
         }
 
         private AccessibilityNodeInfo createAccessibilityNodeInfoForRAMReel(int left, int top,
-                                                                                 int right, int bottom) {
+                                                                            int right, int bottom) {
             AccessibilityNodeInfo info = AccessibilityNodeInfo.obtain();
             info.setClassName(RAMReel.class.getName());
             info.setPackageName(getContext().getPackageName());

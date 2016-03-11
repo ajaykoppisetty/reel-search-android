@@ -34,7 +34,9 @@ public class MainActivity extends AppCompatActivity {
         picker.setOnTextChangeListener(new RAMReel.OnTextChangeListener() {
             @Override
             public void onTextChanged(CharSequence s) {
-                doneItem.setEnabled(TextUtils.isEmpty(s));
+                if (doneItem != null) {
+                    doneItem.setEnabled(TextUtils.isEmpty(s));
+                }
             }
         });
     }
