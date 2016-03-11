@@ -2660,6 +2660,10 @@ public class RAMReel extends LinearLayout {
         return resultArray;
     }
 
+    public void setHint(CharSequence hint) {
+        mInputText.setHint(hint);
+    }
+
     public void clear() {
         mInputClear.performClick();
     }
