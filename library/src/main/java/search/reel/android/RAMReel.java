@@ -1404,7 +1404,7 @@ public class RAMReel extends LinearLayout {
         setMaxValue(mDisplayedValues.length - 1);
         setValue(mDisplayedValues.length / 2);
         if (getMaxValue() <= 0) {
-            currentText = null;
+            currentText = "";
         }
         updateInputTextView();
         initializeSelectorWheelIndices();
@@ -1460,7 +1460,7 @@ public class RAMReel extends LinearLayout {
         // draw the selector wheel
         int[] selectorIndices = mSelectorIndices;
         float nearestDistance = Integer.MAX_VALUE;
-        currentText = null;
+        currentText = "";
         for (int selectorIndex : selectorIndices) {
             String scrollSelectorValue = mSelectorIndexToStringCache.get(selectorIndex);
             // Do not draw the middle item if input is visible since the input
