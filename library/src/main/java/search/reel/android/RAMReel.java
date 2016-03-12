@@ -28,13 +28,22 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.*;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.Spanned;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.text.method.NumberKeyListener;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.util.TypedValue;
-import android.view.*;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.LayoutInflater.Filter;
+import android.view.MotionEvent;
+import android.view.VelocityTracker;
+import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 import android.view.accessibility.AccessibilityNodeInfo;
@@ -838,9 +847,9 @@ public class RAMReel extends LinearLayout {
         int[] l = new int[2];
         view.getLocationOnScreen(l);
         int x = l[0];
-        int y = l[1];
+        int y = l[1] + (view.getHeight() - mTextSize) / 2;
         int w = view.getWidth();
-        int h = view.getHeight();
+        int h = mTextSize;
 
         if (rx < x || rx > x + w || ry < y || ry > y + h) {
             return false;
@@ -1119,12 +1128,12 @@ public class RAMReel extends LinearLayout {
     public void scrollBy(int x, int y) {
         int[] selectorIndices = mSelectorIndices;
         if (!mWrapSelectorWheel && y > 0
-                && selectorIndices[SELECTOR_MIDDLE_ITEM_INDEX] <= mMinValue) {
+                && selectorIndices[SELECTOR_MIDDLE_ITEM_INDEX] <= mMinValue && mCurrentScrollOffset + y > mInitialScrollOffset) {
             mCurrentScrollOffset = mInitialScrollOffset;
             return;
         }
         if (!mWrapSelectorWheel && y < 0
-                && selectorIndices[SELECTOR_MIDDLE_ITEM_INDEX] >= mMaxValue) {
+                && selectorIndices[SELECTOR_MIDDLE_ITEM_INDEX] >= mMaxValue && mCurrentScrollOffset + y < mInitialScrollOffset) {
             mCurrentScrollOffset = mInitialScrollOffset;
             return;
         }
