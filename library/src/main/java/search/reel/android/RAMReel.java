@@ -94,7 +94,6 @@ import search.reel.reel_search_android.R;
  * </p>
  */
 //@Widget
-@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class RAMReel extends LinearLayout {
 
     /**
@@ -700,8 +699,14 @@ public class RAMReel extends LinearLayout {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (TextUtils.isEmpty(filterText)) {
+                if (TextUtils.isEmpty(s)) {
                     filterText = s.toString();
+                    setDisplayedValues(filter(mValues, s));
+                } else if (TextUtils.isEmpty(filterText)) {
+                    filterText = s.toString();
+                    techChanges = true;
+                    mInputText.setText(filterText);
+                    mInputText.setSelection(filterText.length());
                     setDisplayedValues(filter(mValues, s));
                 } else if (state == ONE_ADDED || state == DELETED) {
                     state = IDLE;
@@ -731,7 +736,6 @@ public class RAMReel extends LinearLayout {
             }
         });
 
-        mInputText.setRawInputType(InputType.TYPE_CLASS_NUMBER);
         mInputText.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
         // initialize constants
@@ -759,8 +763,10 @@ public class RAMReel extends LinearLayout {
 
         updateInputTextView();
 
-        if (getImportantForAccessibility() == IMPORTANT_FOR_ACCESSIBILITY_AUTO) {
-            setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_YES);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            if (getImportantForAccessibility() == IMPORTANT_FOR_ACCESSIBILITY_AUTO) {
+                setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_YES);
+            }
         }
     }
 
@@ -1506,6 +1512,7 @@ public class RAMReel extends LinearLayout {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onInitializeAccessibilityEvent(AccessibilityEvent event) {
         super.onInitializeAccessibilityEvent(event);
@@ -2209,6 +2216,7 @@ public class RAMReel extends LinearLayout {
     /**
      * Class for managing virtual view tree rooted at this picker.
      */
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     class AccessibilityNodeProviderImpl extends AccessibilityNodeProvider {
         private static final int UNDEFINED = Integer.MIN_VALUE;
 
